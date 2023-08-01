@@ -3,7 +3,8 @@ from telegram.ext import (ApplicationBuilder, CommandHandler, MessageHandler,
 
 from config import settings
 from handlers import (hobby, love_story, school_photo, selfie, source_code,
-                      sql_nosql, start, unknown_messages, what_is_gpt)
+                      sql_nosql, start, unknown_messages, what_is_gpt, voice_command)
+from constants import PATERN
 
 
 def main():
@@ -13,13 +14,16 @@ def main():
     )
     app.add_handlers([
         CommandHandler("start", start),
-        CommandHandler("selfie", selfie),
-        CommandHandler("school_photo", school_photo),
         CommandHandler("hobby", hobby),
         CommandHandler("voice_gpt", what_is_gpt),
         CommandHandler("voice_sql_nosql", sql_nosql),
         CommandHandler("voice_love_story", love_story),
         CommandHandler("source_code", source_code),
+        MessageHandler(filters.Regex(PATERN.format("Моё селфи")), selfie),
+        MessageHandler(
+            filters.Regex(PATERN.format("Я в старшей школе")), school_photo
+        ),
+        MessageHandler(filters.VOICE, voice_command),
         MessageHandler(filters.ALL, unknown_messages)
     ])
     app.run_polling()
