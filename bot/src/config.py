@@ -7,6 +7,9 @@ class Settings(BaseSettings):
 
     telegram_token: SecretStr
 
+    oauth_token: SecretStr
+    id_folder: SecretStr
+
     class Config:
         """Env settings."""
 

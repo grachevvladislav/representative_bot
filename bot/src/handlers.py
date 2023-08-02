@@ -1,8 +1,12 @@
-from telegram.ext import ContextTypes
-from telegram import ReplyKeyboardMarkup, Update
-from message import MY_HOBBY, SOURСE_CODE, START_MESSAGE, UNKNOWN_MESSAGES
+import os
 
-from constants import keyboard
+from telegram import ReplyKeyboardMarkup, Update
+from telegram.ext import ContextTypes
+
+from constants import keyboard, voice_commands
+from message import (MY_HOBBY, SOURСE_CODE, START_MESSAGE, TOO_LONG_MESSAGE,
+                     UNKNOWN_MESSAGES)
+from voice_to_text import recognize
 
 
 async def start(update: Update, _: ContextTypes.DEFAULT_TYPE):
@@ -67,9 +71,22 @@ async def love_story(update: Update, _: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_voice(voice=open('media/love_story.ogg', 'rb'))
 
 
-async def voice_command(update: Update, _: ContextTypes.DEFAULT_TYPE):
-    text="11111"
-    await update.message.reply_text(text)
+async def voice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.message.voice.duration > 15:
+        await update.message.reply_text(TOO_LONG_MESSAGE)
+
+    filename = update.message.voice.file_id + ".ogg"
+    file = await update.message.effective_attachment.get_file()
+    await file.download_to_drive(filename)
+    text = await recognize(filename)
+    print(text)
+    os.remove(filename)
+
+    handler = globals().get(voice_commands.get(text.lower()))
+    if handler and callable(handler):
+        await handler(update, context)
+    else:
+        await update.message.reply_text(UNKNOWN_MESSAGES)
 
 
 async def unknown_messages(update: Update, _: ContextTypes.DEFAULT_TYPE):

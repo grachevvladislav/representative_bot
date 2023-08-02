@@ -2,9 +2,10 @@ from telegram.ext import (ApplicationBuilder, CommandHandler, MessageHandler,
                           filters)
 
 from config import settings
-from handlers import (hobby, love_story, school_photo, selfie, source_code,
-                      sql_nosql, start, unknown_messages, what_is_gpt, voice_command)
 from constants import PATERN
+from handlers import (hobby, love_story, school_photo, selfie, source_code,
+                      sql_nosql, start, unknown_messages, voice_command,
+                      what_is_gpt)
 
 
 def main():
