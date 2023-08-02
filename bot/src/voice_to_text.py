@@ -5,7 +5,6 @@ import aiohttp
 
 from config import settings
 from constants import DATE_PATERN, IAM_TOKEN_URL, SPEECH_KIT_URL
-from message import ERROR_MESSAGE
 
 IAM_TOKEN = {
     'iamToken': '',
@@ -48,9 +47,9 @@ async def recognize(file_name):
                     data=voice
             ) as response:
                 if response.status != 200:
-                    return ERROR_MESSAGE
+                    return ""
                 content = await response.read()
                 decode_response = content.decode('utf-8')
         text = json.loads(decode_response)["result"]
         return text
-    return ERROR_MESSAGE
+    return ""

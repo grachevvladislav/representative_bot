@@ -1,0 +1,10 @@
+repos:
+
+- repo: local
+  hooks:
+    - id: export-prod-requirements
+      name: Export PROD requirements
+      language: system
+      pass_filenames: false
+      entry: poetry export --without-hashes --output requirements.txt
+      files: ^(pyproject.toml|poetry.lock)$

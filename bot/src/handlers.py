@@ -5,7 +5,7 @@ from telegram.ext import ContextTypes
 
 from constants import keyboard, voice_commands
 from message import (MY_HOBBY, SOURСE_CODE, START_MESSAGE, TOO_LONG_MESSAGE,
-                     UNKNOWN_MESSAGES)
+                     UNKNOWN_MESSAGES, ERROR_MESSAGE)
 from voice_to_text import recognize
 
 
@@ -72,6 +72,9 @@ async def love_story(update: Update, _: ContextTypes.DEFAULT_TYPE):
 
 
 async def voice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Accepts voice commands and calls handler.
+    """
     if update.message.voice.duration > 15:
         await update.message.reply_text(TOO_LONG_MESSAGE)
 
@@ -79,9 +82,10 @@ async def voice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file = await update.message.effective_attachment.get_file()
     await file.download_to_drive(filename)
     text = await recognize(filename)
-    print(text)
     os.remove(filename)
 
+    if text == "":
+        await update.message.reply_text(ERROR_MESSAGE)
     handler = globals().get(voice_commands.get(text.lower()))
     if handler and callable(handler):
         await handler(update, context)
